@@ -8,7 +8,7 @@ import "dotenv/config";
 const CHROMA_URL = "http://localhost:8000";
 const COLLECTION_NAME = "deal_versions";
 
-export const askQuestion = async (question: string) => {
+export const askQuestion = async (question: string, kDocs?: number) => {
   const embeddings = new OpenAIEmbeddings();
 
   const vectorstore = await Chroma.fromExistingCollection(embeddings, {
@@ -16,7 +16,7 @@ export const askQuestion = async (question: string) => {
     url: CHROMA_URL,
   });
 
-  const docs = await vectorstore.similaritySearch(question, 20);
+  const docs = await vectorstore.similaritySearch(question, kDocs ?? 50);
   const context = docs.map((doc) => doc.pageContent).join("\n\n");
 
   const llm = new ChatOpenAI({
